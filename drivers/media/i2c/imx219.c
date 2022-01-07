@@ -585,19 +585,27 @@ static int imx219_read_reg(struct imx219 *imx219, u16 reg, u32 len, u32 *val)
 	if (len > 4)
 		return -EINVAL;
 
-	/* Write register address */
-	msgs[0].addr = client->addr;
-	msgs[0].flags = 0;
-	msgs[0].len = ARRAY_SIZE(addr_buf);
-	msgs[0].buf = addr_buf;
+	for (__u16 i = 0; i < 120; i++)
+	{
+		/* Write register address */
+		msgs[0].addr = i;
+		msgs[0].flags = 0;
+		msgs[0].len = ARRAY_SIZE(addr_buf);
+		msgs[0].buf = addr_buf;
 
-	/* Read data from register */
-	msgs[1].addr = client->addr;
-	msgs[1].flags = I2C_M_RD;
-	msgs[1].len = len;
-	msgs[1].buf = &data_buf[4 - len];
+		/* Read data from register */
+		msgs[1].addr = i;
+		msgs[1].flags = I2C_M_RD;
+		msgs[1].len = len;
+		msgs[1].buf = &data_buf[4 - len];
 
-	ret = i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
+		ret = i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
+
+		pr_info(KERN_INFO "i=%u, got %d\n", i, ret);
+	}
+
+	ret = -6;
+
 	if (ret != ARRAY_SIZE(msgs))
 		return -EIO;
 
