@@ -12,9 +12,9 @@
         __overlay__ {
             #address-cells = <1>;
 			#size-cells = <0>;
-            imx219_mipi@34 {
+            imx219_mipi@10 {
                 compatible = "sony,imx219";
-                reg = <0x34>;
+                reg = <0x10>;
 
                 pinctrl-names = "default";
 				pinctrl-0 = <&pinctrl_csi1>;
