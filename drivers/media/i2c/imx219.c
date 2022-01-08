@@ -587,17 +587,23 @@ static int imx219_read_reg(struct imx219 *imx219, u16 reg, u32 len, u32 *val)
 
 	/* Write register address */
 	msgs[0].addr = client->addr;
+	pr_info(KERN_INFO "imx219: msgs[0].addr = %d\n", client->addr);
 	msgs[0].flags = 0;
 	msgs[0].len = ARRAY_SIZE(addr_buf);
 	msgs[0].buf = addr_buf;
 
 	/* Read data from register */
 	msgs[1].addr = client->addr;
+	pr_info(KERN_INFO "imx219: msgs[1].addr = %d\n", client->addr);
 	msgs[1].flags = I2C_M_RD;
 	msgs[1].len = len;
 	msgs[1].buf = &data_buf[4 - len];
 
+	
+
 	ret = i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
+	pr_info(KERN_INFO "imx219: i2c_transfer -> %d\n", ret);
+	
 	if (ret != ARRAY_SIZE(msgs))
 		return -EIO;
 
