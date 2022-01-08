@@ -5,5 +5,5 @@ cp ./arch/arm64/boot/dts/freescale/overlays/maaxboard-imx219.dtbo /media/totar/b
 echo "Done, cleaning...."
 sudo umount /media/totar/boot
 echo "Umounted"
-make clean
+# make clean
 echo "Cleaned"
