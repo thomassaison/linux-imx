@@ -1,0 +1,76 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/clock/imx8mq-clock.h>
+#include <dt-bindings/gpio/gpio.h>
+
+/{
+	compatible = "avnet,maaxboard", "fsl,imx8mq";
+
+    fragment@0 {
+        target = <&i2c1>;
+        __overlay__ {
+            #address-cells = <1>;
+			#size-cells = <0>;
+            imx219_mipi@10 {
+                compatible = "sony,imx219";
+                reg = <0x10>;
+
+                pinctrl-names = "default";
+				pinctrl-0 = <&pinctrl_csi1>;
+
+                clocks = <&imx219_clk>;
+				clock-names = "xclk";
+
+                csi_id = <0>;
+				pwn-gpios = <&gpio3 14 GPIO_ACTIVE_HIGH>;
+				rst-gpios = <&gpio3 18 GPIO_ACTIVE_HIGH>;
+				status = "okay";
+
+				mclk = <24000000>;
+				mclk_source = <0>;
+
+                port {
+					imx219_mipi1_ep: endpoint {
+						data-lanes = <1 2>;
+                        remote-endpoint = <&mipi1_sensor_ep>;
+						link-frequencies =
+							/bits/ 64 <456000000>;
+					};
+				};
+            };
+        };
+    };
+
+    fragment@1 {
+		target = <&csi1_bridge>;
+		__overlay__ {
+			status = "okay";
+		};
+	};
+
+    fragment@2 {
+		target = <&mipi_csi_1>;
+		__overlay__ {
+			status = "okay";
+			port {
+				mipi1_sensor_ep: endpoint@0 {
+					remote-endpoint = <&imx219_mipi1_ep>;
+				    data-lanes = <1 2>;
+                    bus-type = <4>;
+				};
+			};
+		};
+	};
+
+	fragment@3 {
+		target-path="/";
+		__overlay__ {
+			imx219_clk: camera-clk {
+				compatible = "fixed-clock";
+				#clock-cells = <0>;
+				clock-frequency = <24000000>;
+			};
+		};
+	};
+};
